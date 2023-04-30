@@ -90,6 +90,16 @@
         opacity: 0.7;
     }
 
+    .statusContainer {
+        width: 100%;
+        font-size: 20px;
+        margin-bottom: -10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+
     .inputContainer {
         width: 100%;
         display: flex;
@@ -107,11 +117,13 @@
   </style>
 </head>
 <body>
-    <div class="pagination">
+    <div class="statusContainer">
         <span>STATUS: &nbsp;</span><p id="currentStatus">...&nbsp;</p>
+    </div>
+    <div class="pagination">
         <button id="prevPage" onclick="prevPage()">PREVIOUS</button>
         <button id="nextPage" onclick="nextPage()">NEXT</button>
-        <button id="randomPage" onclick="randomPage()">RANDOM [Beta]</button>
+        <button id="randomPage" onclick="randomPage()">RANDOM</button>
         <p id="pageCounter">&nbsp; (PAGE 1/?)</p>
     </div>
     <div class="inputContainer">
