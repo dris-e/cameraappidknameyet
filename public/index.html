@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>very legal minnesota camera directory</title>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Overpass:wght@500;600;700&display=swap');
+
+    @keyframes gradient {
+        0% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+
+    body {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Overpass', sans-serif !important;
+      color: #fefefe;
+      padding: 20px;
+      /* background-color: black; */
+       background: linear-gradient(45deg, #000000, #0A081E);
+        background-size: 200% 200%;
+        background-repeat: none;
+        animation: gradient 15s ease infinite;
+    }
+
+    .camera {
+      margin: 20px;
+      padding: 20px;
+      width: 320px;
+      height: 280px;
+      background-color: rgba(0, 132, 80, 0.8);
+      font-style: 700;
+      align-items: center;
+      border: 4px solid #fefefe;
+      border-radius: 8px;
+      display: none;
+      box-shadow: inset 0 10px 20px rgba(0, 0, 0, .075), 0 0 15px rgba(255, 255, 255, 0.6);
+      transition: all 0.5s ease !important;
+    }
+
+    .camera h1 {
+        margin: 0px !important;
+    }
+
+    .currentStatus {
+        box-shadow: 0 10px 20px rgba(0, 0, 0, .075), 0 0 15px rgba(255, 255, 255, 0.6);
+    }
+
+    .camera video {
+        border-radius: 8px;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 20px;
+      width: 100%;
+    }
+
+    .pagination button, .inputContainer input {
+      background-color: rgba(0, 132, 80, 1);
+      color: #fefefe;
+      border: 3px solid #fefefe;
+      box-shadow: inset 0 10px 20px rgba(0, 0, 0, .075), 0 0 5px rgba(255, 255, 255, 0.6);
+      border-radius: 5px;
+      padding: 8px 16px;
+      font-family: 'Overpass', sans-serif !important;
+      cursor: pointer;
+      margin: 0 5px;
+    }
+
+    .inputContainer input {
+        width: 50px;
+    }
+
+    .pagination button:hover {
+        background-color: rgba(0, 132, 80, 0.7);
+    }
+
+    .pagination button:disabled {
+        opacity: 0.7;
+    }
+
+    .inputContainer {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        margin: -10px 0px 20px 0px;
+    }
+
+  </style>
+</head>
+<body>
+    <div class="pagination">
+        <span>STATUS: &nbsp;</span><p id="currentStatus">...&nbsp;</p>
+        <button id="prevPage" onclick="prevPage()">PREVIOUS</button>
+        <button id="nextPage" onclick="nextPage()">NEXT</button>
+        <button id="randomPage" onclick="randomPage()">RANDOM [Beta]</button>
+        <p id="pageCounter">&nbsp; (PAGE 1/?)</p>
+    </div>
+    <div class="inputContainer">
+        <label for="camerasPerPage">CAMERAS PER PAGE: &nbsp;</label>
+        <input type="number" id="camerasPerPage" value="30" min="1" onchange="updateCamerasPerPage();">
+    </div>
+    
+  <script>
+    const cameraBaseUrl = 'https://video.dot.state.mn.us/public/';
+    const minCameraNumber = 0;
+    const maxCameraNumber = 5000; //idk where it actually ends
+    let camerasPerPage = 30;
+    let currentPage = 0;
+    let isLoading = false;
+    let i = 0;
+    let lastCheckedCamera = 0;
+    let activeCameraArr = [];
+
+    const currentStatus = document.getElementById("currentStatus");
+    const pageCounter = document.getElementById("pageCounter");
+    const prevPageButton = document.getElementById("prevPage");
+    const nextPageButton = document.getElementById("nextPage");
+
+    async function checkCamera(cameraNumber) {
+      const url = `${cameraBaseUrl}C${cameraNumber}.stream/playlist.m3u8`;
+      try {
+        const response = await fetch(url, { method: 'HEAD' });
+        currentStatus.style.color = "GREEN";
+        activeCameraArr.push(cameraNumber);
+        return response.ok;
+      } catch (error) {
+        currentStatus.style.color = "RED";
+        return false;
+      }
+    }
+
+    async function loadCameras(start, end) {
+        isLoading = true;
+        prevPageButton.disabled = true;
+        nextPageButton.disabled = true;
+
+        let activeCameras = 0;
+        // i += minCameraNumber
+    for (i = minCameraNumber; activeCameras <= end && i <= maxCameraNumber; i++) {
+        currentStatus.innerHTML = `Checking C${i}...&nbsp;`;
+        if (await checkCamera(i)) {
+        console.log(activeCameraArr);
+        activeCameras++;
+
+        if (activeCameras >= start + 1) {
+            const url = `${cameraBaseUrl}C${i}.stream/playlist.m3u8`;
+            const cameraElement = document.createElement('div');
+            cameraElement.className = 'camera';
+            cameraElement.innerHTML = `
+            <h1>CAMERA C${i}</h1>
+            <video width="320" height="240" controls autoplay></video>
+            `;
+            document.body.appendChild(cameraElement);
+            cameraElement.style.display = 'block';
+
+            const video = cameraElement.querySelector('video');
+            if (Hls.isSupported()) {
+            const hls = new Hls();
+            hls.loadSource(url);
+            hls.attachMedia(video);
+            hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                video.play();
+            });
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            video.src = url;
+            video.addEventListener('loadedmetadata', function () {
+                video.play();
+            });
+            }
+        }
+        }
+    }
+    lastCheckedCamera = i;
+    console.log(lastCheckedCamera);
+    currentStatus.style.color = "WHITE";
+    currentStatus.innerHTML = `Finished (${(currentPage * camerasPerPage) + camerasPerPage} found)&nbsp;`;
+    isLoading = false;
+      prevPageButton.disabled = currentPage === 0;
+      nextPageButton.disabled = false;
+    }
+
+    function clearCameras() {
+      const cameras = document.querySelectorAll('.camera');
+      cameras.forEach((camera) => camera.remove());
+    }
+
+    function nextPage() {
+        if (!isLoading) {
+            clearCameras();
+            currentPage++;
+            pageCounter.innerHTML = `&nbsp; (PAGE ${currentPage + 1}/?)`;
+            // loadCameras(0, camerasPerPage - 1);
+            loadCameras(currentPage * camerasPerPage, (currentPage * camerasPerPage) + camerasPerPage - 1);
+      }
+    }
+
+    function prevPage() {
+        if (!isLoading && currentPage > 0) {
+            clearCameras();
+            currentPage--;
+            pageCounter.innerHTML = `&nbsp; (PAGE ${currentPage + 1}/?)`;
+            // loadCameras(currentPage * camerasPerPage, (currentPage * camerasPerPage) + camerasPerPage - 1);
+            loadCameras(currentPage * camerasPerPage, (currentPage * camerasPerPage) + camerasPerPage - 1);
+        }
+    }
+
+    function randomPage() {
+        if (!isLoading) {
+            clearCameras();
+            const randomStart = Math.floor(Math.random() * (maxCameraNumber - camerasPerPage + 1));
+            loadCameras(randomStart, randomStart + camerasPerPage - 1);
+        }
+    }
+
+
+    function updateCamerasPerPage() {
+        const newCamerasPerPage = parseInt(document.getElementById("camerasPerPage").value);
+        if (newCamerasPerPage > 0) {
+            camerasPerPage = newCamerasPerPage;
+            currentPage = 0;
+            clearCameras();
+            loadCameras(currentPage * camerasPerPage, (currentPage * camerasPerPage) + camerasPerPage - 1);
+        }
+    }
+
+    loadCameras(currentPage * camerasPerPage, (currentPage * camerasPerPage) + camerasPerPage - 1);
+
+  </script>
+</body>
+</html>
