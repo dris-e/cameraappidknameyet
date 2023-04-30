@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>very legal minnesota camera directory</title>
+  <title>very legal camera directory</title>
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Overpass:wght@500;600;700&display=swap');
@@ -36,7 +36,7 @@
     }
 
     .camera {
-      margin: 20px;
+      margin: 10px;
       padding: 20px;
       width: 320px;
       height: 280px;
@@ -46,16 +46,12 @@
       border: 4px solid #fefefe;
       border-radius: 8px;
       display: none;
-      box-shadow: inset 0 10px 20px rgba(0, 0, 0, .075), 0 0 15px rgba(255, 255, 255, 0.6);
+      box-shadow: inset 0 10px 20px rgba(0, 0, 0, .075), 0 0 10px rgba(255, 255, 255, 0.6);
       transition: all 0.5s ease !important;
     }
 
     .camera h1 {
         margin: 0px !important;
-    }
-
-    .currentStatus {
-        box-shadow: 0 10px 20px rgba(0, 0, 0, .075), 0 0 15px rgba(255, 255, 255, 0.6);
     }
 
     .camera video {
@@ -103,6 +99,11 @@
         margin: -10px 0px 20px 0px;
     }
 
+    #realCredits {
+        position: fixed;
+        bottom: 0px;
+        left: 20px;
+    }
   </style>
 </head>
 <body>
@@ -117,6 +118,7 @@
         <label for="camerasPerPage">CAMERAS PER PAGE: &nbsp;</label>
         <input type="number" id="camerasPerPage" value="30" min="1" onchange="updateCamerasPerPage();">
     </div>
+    <p id="realCredits"><span style="color: red">NOT</span> created by dris elamri</p>
     
   <script>
     const cameraBaseUrl = 'https://video.dot.state.mn.us/public/';
