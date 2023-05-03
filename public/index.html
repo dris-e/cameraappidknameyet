@@ -366,7 +366,7 @@
     downloadStatus.style.display = "none";
   };
 
-  const frameInterval = 1000 / 25; // 25 FPS
+  const frameInterval = 1000 / 25; 
   const intervalId = setInterval(drawVideoFrame, frameInterval);
 
   mediaRecorder.start();
@@ -375,7 +375,7 @@
     mediaRecorder.stop();
     clearInterval(intervalId);
     downloadBtn.disabled = false;
-  }, 10000); // Record for 10 seconds
+  }, 10000); 
 }
 
 
