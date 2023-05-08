@@ -196,7 +196,7 @@ input[type=number] {
   }
 
   .liveIndicator.pulsating {
-    animation: pulse 2.5s ease infinite;
+    animation: pulse 1.5s ease infinite;
   }
 
   @keyframes pulse {
