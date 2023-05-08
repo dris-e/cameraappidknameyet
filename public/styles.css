@@ -134,7 +134,7 @@ button:disabled {
 
 #searchCamera {
     color: #fefefe !important;
-    width: auto;
+    width: 60px;
 }
 
 ::placeholder { 
