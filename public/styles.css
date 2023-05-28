@@ -219,7 +219,7 @@ input[type=number] {
 
 @media (max-width: 760px) {
     body {
-        transform: scale(0.75);
+        transform: scale(0.6);
         transform-origin: top;
     }
 
