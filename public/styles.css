@@ -216,3 +216,14 @@ input[type=number] {
     bottom: 0px;
     left: 20px;
 }
+
+@media (max-width: 760px) {
+    body {
+        transform: scale(0.75);
+        transform-origin: top;
+    }
+
+    #realCredits {
+        transform: scale(1) !important;
+    }
+}
